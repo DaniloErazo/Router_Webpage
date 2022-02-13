@@ -3,31 +3,21 @@ let templates = {};
 
 let app_div = document.getElementById('app');
 
-function home(){
-    reloadPage();
+//simplify the 2 methods into one because they are similar
+function renderPage(name, nextPageName, nextPageNamelink) {
+    //instead of reloading the page, empty the HTML element. Is better from a performance, storage and user experience perspective
+    app_div.innerHTML = "";
 
+    //create HTML elements
     let div = document.createElement('div');
-    let link = document.createElement('a');
-    link.href = '#/about';
-    link.innerText = 'About';
-
-    div.innerHTML = '<h1>Home</h1>';
-    div.appendChild(link);
-
-    app_div.appendChild(div);
-};
-
-function about() {
-    reloadPage();
+    let anchor = document.createElement('a');
+    anchor.href = `#/${nextPageNamelink}`;
+    anchor.innerText = nextPageName;
     
-    let div = document.createElement('div');
-    let link = document.createElement('a');
-    link.href = '#/';
-    link.innerText = 'Home';
+    div.innerHTML = `<h1>${name}</h1>`;
 
-    div.innerHTML = '<h1>About</h1>';
-    div.appendChild(link);
-
+    div.appendChild(anchor);
+    
     app_div.appendChild(div);
 }
 
@@ -47,11 +37,12 @@ function template (name, templateFunction) {
 };
     
 template('home', function(){
-    home();
+    renderPage('Home', 'About', 'about');
 });
     
 template('about', function(){
-    about();
+    //empty link beacuse the route is just a "/" so it doesnt need anything added to the URL
+    renderPage('About', 'Home', '');
 });
     
 route('/', 'home');
@@ -76,15 +67,3 @@ window.addEventListener('load', router);
     
 window.addEventListener('hashchange', router);
 
-function reloadPage(){
-    //get the actual local storage
-    if (window.localStorage) {
-        //retreive the "reload" item
-        if (!localStorage.getItem('reload')) {
-            localStorage['reload'] = true;
-            window.location.reload();
-        } else {
-            localStorage.removeItem('reload');
-        }
-    }
-}
